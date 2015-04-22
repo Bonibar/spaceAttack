@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Socket.io</title>
+    </head>
+ 
+    <body>
+        <h1>Login page</h1>
+
+        <h2 id="alert" style="display: none; color: red;"></h2>
+
+        <p>Nickname: <input type="text" id="nickName" /></p>
+        <p>Team: <input type="text" id="teamName" /></p>
+        <p>Role: 
+        <select id="roleName">
+            <option value="Role1">Role1</option>
+            <option value="Role2">Role2</option>
+            <option value="Role3">Role3</option>
+            <option value="Role4">Role4</option>
+        </select></p>
+        <p><input type="button" value="Se connecter" id="connect" /></p>
+
+
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io.connect('http://localhost:8080');
+
+            // On affiche une boîte de dialogue quand le serveur nous envoie un "message"
+            socket.on('message', function(message) {
+                alert('Le serveur a un message pour vous : ' + message);
+            })
+
+            // Lorsqu'on clique sur le bouton, on envoie un "message" au serveur
+            $('#connect').click(function () {
+                var nick = document.getElementById('nickName').value;
+                var team = document.getElementById('teamName').value;
+                var role = document.getElementById('roleName').value;
+                if (nick == "" || team == "" || role == "") {
+                    document.getElementById('alert').innerHTML = "Error form !";
+                    document.getElementById('alert').style.display = "block";
+                } else {
+                    document.getElementById('alert').style.display = "none";
+                    socket.emit('setNick', nick);
+                    socket.emit('setRole', role);
+                    socket.emit('setTeam', team);
+                }
+            })
+        </script>
+    </body>
+</html>
